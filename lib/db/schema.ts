@@ -13,6 +13,7 @@ export const users = pgTable('users', {
   name: varchar('name', { length: 100 }),
   email: varchar('email', { length: 255 }).notNull().unique(),
   passwordHash: text('password_hash').notNull(),
+  userType: varchar('user_type', { length: 20 }).notNull().default('talent'),
   role: varchar('role', { length: 20 }).notNull().default('member'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -68,6 +69,57 @@ export const invitations = pgTable('invitations', {
   status: varchar('status', { length: 20 }).notNull().default('pending'),
 });
 
+export const talentProfiles = pgTable('talent_profiles', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id),
+  resumeUrl: text('resume_url'),
+  parsedData: text('parsed_data'),
+  skills: text('skills'),
+  experience: text('experience'),
+  education: text('education'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const jobListings = pgTable('job_listings', {
+  id: serial('id').primaryKey(),
+  teamId: integer('team_id')
+    .notNull()
+    .references(() => teams.id),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description').notNull(),
+  requirements: text('requirements'),
+  status: varchar('status', { length: 20 }).notNull().default('draft'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const talentGroups = pgTable('talent_groups', {
+  id: serial('id').primaryKey(),
+  teamId: integer('team_id')
+    .notNull()
+    .references(() => teams.id),
+  name: varchar('name', { length: 255 }).notNull(),
+  filterCriteria: text('filter_criteria'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const jobApplications = pgTable('job_applications', {
+  id: serial('id').primaryKey(),
+  jobId: integer('job_id')
+    .notNull()
+    .references(() => jobListings.id),
+  talentId: integer('talent_id')
+    .notNull()
+    .references(() => users.id),
+  status: varchar('status', { length: 20 }).notNull().default('pending'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
 export const teamsRelations = relations(teams, ({ many }) => ({
   teamMembers: many(teamMembers),
   activityLogs: many(activityLogs),
@@ -110,6 +162,21 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
     fields: [activityLogs.userId],
     references: [users.id],
   }),
+}));
+
+export const talentProfilesRelations = relations(talentProfiles, ({ one }) => ({
+  user: one(users, {
+    fields: [talentProfiles.userId],
+    references: [users.id],
+  }),
+}));
+
+export const jobListingsRelations = relations(jobListings, ({ one, many }) => ({
+  team: one(teams, {
+    fields: [jobListings.teamId],
+    references: [teams.id],
+  }),
+  applications: many(jobApplications),
 }));
 
 export type User = typeof users.$inferSelect;

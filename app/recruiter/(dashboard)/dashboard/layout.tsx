@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Users, Settings, Shield, Activity, Menu } from 'lucide-react';
+import { Users, Settings, Shield, Activity, Menu, FileText, Briefcase, CreditCard, Building, UserCircle } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
@@ -14,12 +14,25 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const navItems = [
-    { href: '/dashboard', icon: Users, label: 'Team' },
-    { href: '/dashboard/general', icon: Settings, label: 'General' },
-    { href: '/dashboard/activity', icon: Activity, label: 'Activity' },
+  const talentNavItems = [
+    { href: '/dashboard/profile', icon: UserCircle, label: 'Profile' },
+    { href: '/dashboard/resume', icon: FileText, label: 'Resume' },
+    { href: '/dashboard/matches', icon: Briefcase, label: 'Job Matches' },
+    { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
     { href: '/dashboard/security', icon: Shield, label: 'Security' },
   ];
+
+  const recruiterNavItems = [
+    { href: '/dashboard/talent-pool', icon: Users, label: 'Talent Pool' },
+    { href: '/dashboard/jobs', icon: Building, label: 'Job Listings' },
+    { href: '/dashboard/credits', icon: CreditCard, label: 'Credits & Billing' },
+    { href: '/dashboard/team', icon: Users, label: 'Team' },
+    { href: '/dashboard/activity', icon: Activity, label: 'Activity' },
+  ];
+
+  // TODO: Replace with actual role check from user data
+  const isRecruiter = false;
+  const navItems = isRecruiter ? recruiterNavItems : talentNavItems;
 
   return (
     <div className="flex flex-col min-h-[calc(100dvh-68px)] max-w-7xl mx-auto w-full">
