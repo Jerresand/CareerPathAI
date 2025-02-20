@@ -4,6 +4,8 @@ This was a modern, full-featured SaaS starter template built with Next.js and Ty
 
 Now i want to build a SaaS app with this template. IT IS VERY IMPORTANT THAT THE CORE FUNCTIONALITIES OF THIS TEMPLATE ARE KEPT.
 
+I USE PNPM AS PACKAGE MANAGER.
+
 THAT IS:
 
 - Authentication
@@ -72,6 +74,31 @@ The recruiter side:
   - Protected routes with middleware
   - Team-based authorization
 
+### Database & Migrations
+- **ORM & Schema Management**:
+  - Drizzle ORM for type-safe database operations
+  - Schema defined in `lib/db/schema.ts`
+  - Migrations stored in `lib/db/migrations/`
+  - Automatic migration generation with `drizzle-kit`
+
+- **Migration Workflow**:
+  1. Define schema in `lib/db/schema.ts`
+  2. Generate migrations: `npx drizzle-kit generate:pg`
+  3. Apply migrations: `npx drizzle-kit push:pg`
+  4. View database in Supabase Studio: `supabase start`
+
+- **Important Notes**:
+  - Always use Drizzle migrations (in `lib/db/migrations/`) instead of Supabase migrations
+  - Migration files are automatically named with incremental prefixes (e.g., `0000_`, `0001_`)
+  - Each migration includes both "up" (apply) and "down" (rollback) operations
+  - Relations are defined using Drizzle's type-safe relation builders
+
+- **Database Tools Integration**:
+  - Supabase for database GUI and management
+  - pgAdmin for advanced database operations
+  - Connection pooling with `postgres.js`
+  - Environment variables in `.env` for database configuration
+
 ### Payments
 - **Stripe Integration**:
   - Subscription management
@@ -83,11 +110,12 @@ The recruiter side:
 
 ### Development Tools
 - **Database Management**:
-  - `db:setup` - Initial database setup
-  - `db:seed` - Seed database with initial data
-  - `db:generate` - Generate Drizzle migrations
-  - `db:migrate` - Run migrations
-  - `db:studio` - Launch Supabase Studio
+  - `npx drizzle-kit generate:pg` - Generate new migrations from schema changes
+  - `npx drizzle-kit push:pg` - Apply migrations to database
+  - `npm run db:seed` - Seed database with initial data (teams, users, etc.)
+  - `supabase start` - Start Supabase services and Studio UI
+  - `supabase stop` - Stop all Supabase services
+  - `supabase status` - Check status of Supabase services
 
 ## Project Structure
 
@@ -97,11 +125,11 @@ The recruiter side:
 │   │   ├── login/
 │   │   ├── signup/
 │   │   └── forgot-password/
-│   ├── (talent)/             # Talent-specific pages
-│   │   ├── dashboard/        # Resume upload & job listings
+│   ├── talent/             # Talent-specific pages
+│   │   ├── (dashboard)/        # Resume upload & job listings
 │   │   └── profile/          # Profile management
-│   ├── (recruiter)/          # Recruiter-specific pages
-│   │   ├── dashboard/        # Talent pool & analytics
+│   ├── recruiter/          # Recruiter-specific pages
+│   │   ├── (dashboard)/        # Talent pool & analytics
 │   │   ├── talents/          # Talent filtering & management
 │   │   └── jobs/            # Job posting management
 │   └── api/                  # API routes
@@ -156,17 +184,53 @@ AUTH_SECRET=            # JWT signing secret
 ## Getting Started
 
 1. Clone the repository
-2. Install dependencies: `npm install`
+2. Install dependencies: `pnpm install`
 3. Set up environment variables
-4. Run database setup: `npm run db:setup`
-5. Start development server: `npm run dev`
+4. Run database setup: `pnpm run db:setup`
+5. Start development server: `pnpm run dev`
 
 ## Development Workflow
 
-1. Make changes to the schema in `lib/db/schema.ts`
-2. Generate migrations: `npm run db:generate`
-3. Apply migrations: `npm run db:migrate`
-4. Seed data if needed: `npm run db:seed`
+### Database Changes
+1. Edit the schema in `lib/db/schema.ts`
+   ```typescript
+   // Example: Adding a new field to users table
+   export const users = pgTable('users', {
+     // ... existing fields ...
+     newField: varchar('new_field', { length: 100 }),
+   });
+   ```
+
+2. Generate a new migration:
+   ```bash
+   npx drizzle-kit generate:pg
+   ```
+   This creates a new file in `lib/db/migrations/` with an incremental prefix
+
+3. Review the generated migration file
+   - Check both the "up" and "down" migrations
+   - Ensure foreign key constraints are correct
+   - Add any necessary indexes
+
+4. Apply the migration:
+   ```bash
+   npx drizzle-kit push:pg
+   ```
+
+5. Update your TypeScript types:
+   ```typescript
+   // Update any affected type definitions
+   export type User = typeof users.$inferSelect;
+   export type NewUser = typeof users.$inferInsert;
+   ```
+
+6. Test the changes:
+   - Verify in Supabase Studio (`supabase start`)
+   - Run your seed script if needed (`pnpm run db:seed`)
+   - Test affected API routes and components
+
+### Other Development Tasks
+// ... existing code ...
 
 ## Production Deployment
 

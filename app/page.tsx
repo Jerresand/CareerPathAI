@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Upload, Briefcase, Sparkles } from 'lucide-react';
+import { ArrowRight, Briefcase, Sparkles } from 'lucide-react';
+import { ResumeUpload } from '@/components/ResumeUpload';
 
 export default function HomePage() {
   return (
@@ -29,18 +30,10 @@ export default function HomePage() {
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-8 text-center">
               Drop Your Resume
             </h1>
-            <div className="bg-white border-2 border-dashed border-orange-200 rounded-xl p-12 text-center hover:border-orange-500 transition-colors cursor-pointer mb-16">
-              <Upload className="h-12 w-12 mx-auto mb-4 text-orange-500" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Drop your file here</h3>
-              <p className="text-gray-600 mb-6">or click to upload</p>
-              <Button size="lg" className="text-lg px-8">
-                Upload Resume
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
+            <ResumeUpload />
           </div>
 
-          <div className="text-center">
+          <div className="text-center mt-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-6">
               <span className="text-orange-500">Find Your Dream Job</span>
             </h2>
@@ -57,7 +50,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-12">
             <div className="text-center">
               <div className="bg-orange-100 rounded-2xl p-6 mb-6 inline-block">
-                <Upload className="h-8 w-8 text-orange-500" />
+                <ArrowRight className="h-8 w-8 text-orange-500" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4">1-Click Application</h3>
               <p className="text-gray-600">

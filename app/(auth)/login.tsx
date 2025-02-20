@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { CircleIcon, Loader2 } from 'lucide-react';
 import { signIn, signUp } from './actions';
 import { ActionState } from '@/lib/auth/middleware';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   const searchParams = useSearchParams();
@@ -84,6 +85,28 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
               />
             </div>
           </div>
+
+          {mode === 'signup' && (
+            <div>
+              <Label className="block text-sm font-medium text-gray-700">
+                I am a
+              </Label>
+              <RadioGroup
+                defaultValue="talent"
+                name="userType"
+                className="mt-2 flex flex-col space-y-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="talent" id="talent" />
+                  <Label htmlFor="talent">Talent looking for opportunities</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="recruiter" id="recruiter" />
+                  <Label htmlFor="recruiter">Recruiter looking for talent</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          )}
 
           {state?.error && (
             <div className="text-red-500 text-sm">{state.error}</div>

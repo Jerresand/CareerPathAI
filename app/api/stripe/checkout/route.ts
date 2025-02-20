@@ -89,7 +89,10 @@ export async function GET(request: NextRequest) {
       .where(eq(teams.id, userTeam[0].teamId));
 
     await setSession(user[0]);
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+
+    // TODO: Replace with actual role check from user data
+    const isRecruiter = false;
+    return NextResponse.redirect(new URL(isRecruiter ? '/recruiter' : '/talent', request.url));
   } catch (error) {
     console.error('Error handling successful checkout:', error);
     return NextResponse.redirect(new URL('/error', request.url));

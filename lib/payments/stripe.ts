@@ -104,9 +104,11 @@ export async function createCustomerPortalSession(team: Team) {
     });
   }
 
+  // TODO: Replace with actual role check from user data
+  const isRecruiter = false;
   return stripe.billingPortal.sessions.create({
     customer: team.stripeCustomerId,
-    return_url: `${process.env.BASE_URL}/dashboard`,
+    return_url: `${process.env.BASE_URL}${isRecruiter ? '/recruiter' : '/talent'}`,
     configuration: configuration.id
   });
 }

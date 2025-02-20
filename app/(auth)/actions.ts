@@ -97,17 +97,19 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
     return createCheckoutSession({ team: foundTeam, priceId });
   }
 
-  redirect('/dashboard');
+  // Redirect based on user type
+  redirect(foundUser.userType === 'recruiter' ? '/recruiter' : '/talent');
 });
 
 const signUpSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   inviteId: z.string().optional(),
+  userType: z.enum(['talent', 'recruiter']),
 });
 
 export const signUp = validatedAction(signUpSchema, async (data, formData) => {
-  const { email, password, inviteId } = data;
+  const { email, password, inviteId, userType } = data;
 
   const existingUser = await db
     .select()
@@ -129,6 +131,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     email,
     passwordHash,
     role: 'owner', // Default role, will be overridden if there's an invitation
+    userType, // Set the user type from the form data
   };
 
   const [createdUser] = await db.insert(users).values(newUser).returning();
@@ -218,7 +221,8 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     return createCheckoutSession({ team: createdTeam, priceId });
   }
 
-  redirect('/dashboard');
+  // Redirect based on user type
+  redirect(userType === 'recruiter' ? '/recruiter' : '/talent');
 });
 
 export async function signOut() {
