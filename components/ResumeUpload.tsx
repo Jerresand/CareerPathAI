@@ -5,11 +5,13 @@ import { useDropzone } from 'react-dropzone';
 import { Upload, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/lib/auth';
 
 export function ResumeUpload() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { userPromise } = useUser();
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -31,34 +33,52 @@ export function ResumeUpload() {
     setError(null);
 
     try {
+      const user = await userPromise;
+      if (!user) {
+        throw new Error('Please sign in to upload your resume');
+      }
+
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('/api/upload', {
+      const uploadResponse = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
 
-      const result = await response.json();
+      const uploadResult = await uploadResponse.json();
 
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to upload resume');
+      if (!uploadResponse.ok) {
+        throw new Error(uploadResult.error || 'Failed to upload resume');
       }
 
-      // Here you would typically:
-      // 1. Call your AI parser service to extract information
-      // 2. Save the parsed data to your database
-      // 3. Redirect to profile completion if needed
+      // Call the resume parser API
+      const parseResponse = await fetch('/api/parse-resume', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          resumeUrl: uploadResult.url,
+        }),
+      });
 
-      console.log('Upload successful:', result);
-      router.push('/talent');
+      const parseResult = await parseResponse.json();
+
+      if (!parseResponse.ok) {
+        throw new Error(parseResult.error || 'Failed to parse resume');
+      }
+
+      console.log('Upload and parse successful:', parseResult);
+      router.push('/talent/resume');
     } catch (err: any) {
       console.error('Upload error:', err);
       setError(err.message || 'Failed to upload resume');
     } finally {
       setUploading(false);
     }
-  }, [router]);
+  }, [router, userPromise]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -83,7 +103,7 @@ export function ResumeUpload() {
         {uploading ? (
           <div className="flex flex-col items-center">
             <Loader2 className="h-12 w-12 text-orange-500 animate-spin" />
-            <p className="mt-4 text-gray-600">Uploading your resume...</p>
+            <p className="mt-4 text-gray-600">Processing your resume...</p>
           </div>
         ) : (
           <>

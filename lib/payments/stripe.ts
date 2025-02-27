@@ -34,7 +34,7 @@ export async function createCheckoutSession({
     ],
     mode: 'subscription',
     success_url: `${process.env.BASE_URL}/api/stripe/checkout?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.BASE_URL}/pricing`,
+    cancel_url: `${process.env.BASE_URL}/recruiter/pricing`,
     customer: team.stripeCustomerId || undefined,
     client_reference_id: user.id.toString(),
     allow_promotion_codes: true,
@@ -48,7 +48,7 @@ export async function createCheckoutSession({
 
 export async function createCustomerPortalSession(team: Team) {
   if (!team.stripeCustomerId || !team.stripeProductId) {
-    redirect('/pricing');
+    redirect('/recruiter/pricing');
   }
 
   let configuration: Stripe.BillingPortal.Configuration;
@@ -104,11 +104,9 @@ export async function createCustomerPortalSession(team: Team) {
     });
   }
 
-  // TODO: Replace with actual role check from user data
-  const isRecruiter = false;
   return stripe.billingPortal.sessions.create({
     customer: team.stripeCustomerId,
-    return_url: `${process.env.BASE_URL}${isRecruiter ? '/recruiter' : '/talent'}`,
+    return_url: `${process.env.BASE_URL}/recruiter/pricing`,
     configuration: configuration.id
   });
 }

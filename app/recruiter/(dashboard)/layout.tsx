@@ -14,32 +14,21 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const talentNavItems = [
-    { href: '/dashboard/profile', icon: UserCircle, label: 'Profile' },
-    { href: '/dashboard/resume', icon: FileText, label: 'Resume' },
-    { href: '/dashboard/matches', icon: Briefcase, label: 'Job Matches' },
-    { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
-    { href: '/dashboard/security', icon: Shield, label: 'Security' },
+  const navItems = [
+    { href: '/recruiter/talent-pool', icon: Users, label: 'Talent Pool' },
+    { href: '/recruiter/jobs', icon: Building, label: 'Job Listings' },
+    { href: '/recruiter/pricing', icon: CreditCard, label: 'Premium Plans' },
+    { href: '/recruiter/team', icon: Users, label: 'Team' },
+    { href: '/recruiter/activity', icon: Activity, label: 'Activity' },
+    { href: '/recruiter/settings', icon: Settings, label: 'Settings' },
   ];
-
-  const recruiterNavItems = [
-    { href: '/dashboard/talent-pool', icon: Users, label: 'Talent Pool' },
-    { href: '/dashboard/jobs', icon: Building, label: 'Job Listings' },
-    { href: '/dashboard/credits', icon: CreditCard, label: 'Credits & Billing' },
-    { href: '/dashboard/team', icon: Users, label: 'Team' },
-    { href: '/dashboard/activity', icon: Activity, label: 'Activity' },
-  ];
-
-  // TODO: Replace with actual role check from user data
-  const isRecruiter = false;
-  const navItems = isRecruiter ? recruiterNavItems : talentNavItems;
 
   return (
     <div className="flex flex-col min-h-[calc(100dvh-68px)] max-w-7xl mx-auto w-full">
       {/* Mobile header */}
       <div className="lg:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4">
         <div className="flex items-center">
-          <span className="font-medium">Settings</span>
+          <span className="font-medium">Menu</span>
         </div>
         <Button
           className="-mr-3"

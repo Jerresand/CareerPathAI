@@ -1,6 +1,6 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users } from './schema';
+import { activityLogs, teamMembers, teams, users, talentProfiles } from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
@@ -126,4 +126,13 @@ export async function getTeamForUser(userId: number) {
   });
 
   return result?.teamMembers[0]?.team || null;
+}
+
+export async function getTalentProfile(userId: number) {
+  const [profile] = await db
+    .select()
+    .from(talentProfiles)
+    .where(eq(talentProfiles.userId, userId));
+  
+  return profile;
 }

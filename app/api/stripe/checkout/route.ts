@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   const sessionId = searchParams.get('session_id');
 
   if (!sessionId) {
-    return NextResponse.redirect(new URL('/pricing', request.url));
+    return NextResponse.redirect(new URL('/recruiter/pricing', request.url));
   }
 
   try {
@@ -90,9 +90,7 @@ export async function GET(request: NextRequest) {
 
     await setSession(user[0]);
 
-    // TODO: Replace with actual role check from user data
-    const isRecruiter = false;
-    return NextResponse.redirect(new URL(isRecruiter ? '/recruiter' : '/talent', request.url));
+    return NextResponse.redirect(new URL('/recruiter/pricing', request.url));
   } catch (error) {
     console.error('Error handling successful checkout:', error);
     return NextResponse.redirect(new URL('/error', request.url));

@@ -1,9 +1,17 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Briefcase, Sparkles } from 'lucide-react';
 import { ResumeUpload } from '@/components/ResumeUpload';
+import { getUser } from '@/lib/db/queries';
 
-export default function HomePage() {
+export default async function HomePage() {
+  const user = await getUser();
+  
+  if (user) {
+    redirect('/talent');
+  }
+
   return (
     <main className="min-h-screen bg-white">
       {/* Navigation */}
