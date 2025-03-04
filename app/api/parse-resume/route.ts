@@ -18,6 +18,8 @@ const supabase = createClient(
 );
 
 interface ParsedResumeData {
+  isResume: boolean;
+  errorMessage?: string;
   fullName?: string;
   email?: string;
   phone?: string;
@@ -87,8 +89,9 @@ export async function POST(request: Request) {
           },
           {
             role: "user",
-            content: `Extract the following information from this resume text in JSON format:
-            
+            content: `First, determine if this document is a resume. Then extract the following information from this resume text in JSON format:
+
+0. isResume: Boolean indicating whether this document appears to be a resume
 1. fullName: The person's full name
 2. email: Email address
 3. phone: Phone number
@@ -96,17 +99,22 @@ export async function POST(request: Request) {
 5. workExperience: An array of objects, each containing:
    - company: Company name
    - title: Job title
-   - dates: Employment period (e.g., "Jan 2020 - Present")
+   - dates: Employment period (e.g., "Jan 2020 - Present" or "Jan 2020 - Dec 2022")
    - description: Job description or achievements
 6. education: An array of objects, each containing:
    - school: Institution name
    - degree: Degree obtained
-   - dates: Study period
+   - dates: Study period (e.g., "Sep 2015 - Jun 2019")
    - gpa: GPA if mentioned
 7. languages: An array of languages the person knows
 8. certifications: An array of certifications
 
-Return ONLY valid JSON without any explanations or markdown formatting. If you can't find certain information, write "TOO LITTLE INFORMATION" as the value, to help me debug. 
+Important notes:
+- For dates, always use the format "MMM YYYY - MMM YYYY" (e.g., "Jan 2020 - Dec 2022") or "MMM YYYY - Present" for current positions
+- Sort workExperience and education arrays with the most recent experiences first (based on end date)
+- If you can't determine exact dates, make your best guess based on the context
+
+Return ONLY valid JSON without any explanations or markdown formatting. If this is not a resume, set isResume to false and include an error message field. If you can't find certain information, write "TOO LITTLE INFORMATION" as the only JSON output, to help me debug. 
 
 Here's the resume text:
 ${extractedText}`
@@ -127,6 +135,17 @@ ${extractedText}`
       try {
         const parsedData = JSON.parse(response.choices[0].message.content) as ParsedResumeData;
         console.log('Successfully parsed JSON response');
+        
+        // Check if the document is a resume
+        if (!parsedData.isResume) {
+          return NextResponse.json(
+            { 
+              success: false, 
+              error: parsedData.errorMessage || 'The uploaded document does not appear to be a resume. Please upload a resume document.' 
+            },
+            { status: 400 }
+          );
+        }
         
         // Step 5: Store the parsed data in the database
         await db

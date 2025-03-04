@@ -15,6 +15,13 @@
       "when": 1739998864575,
       "tag": "0001_swift_lila_cheney",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1741121480151,
+      "tag": "0002_fuzzy_rafael_vega",
+      "breakpoints": true
     }
   ]
 }

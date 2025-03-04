@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileText, Download, User, Mail, Phone, Globe, Award } from 'lucide-react';
 import { ResumeUpload } from '@/components/ResumeUpload';
 import { Button } from '@/components/ui/button';
+import { formatDate } from '@/lib/utils';
 
 export default async function ResumePage() {
   const user = await getUser();
@@ -191,7 +192,7 @@ export default async function ResumePage() {
                   </a>
                 </Button>
                 <p className="text-sm text-gray-500 mt-2">
-                  Last updated: {new Date(profile.updatedAt).toLocaleDateString()}
+                  Last updated: {formatDate(profile.updatedAt, 'display')}
                 </p>
               </div>
             ) : (

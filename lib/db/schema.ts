@@ -5,6 +5,7 @@ import {
   text,
   timestamp,
   integer,
+  boolean,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -73,12 +74,45 @@ export const talentProfiles = pgTable('talent_profiles', {
   id: serial('id').primaryKey(),
   userId: integer('user_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id)
+    .unique(),
   resumeUrl: text('resume_url'),
   parsedData: text('parsed_data'),
+  
+  // Personal information
+  fullName: varchar('full_name', { length: 255 }),
+  phoneNumber: varchar('phone_number', { length: 50 }),
+  location: varchar('location', { length: 255 }),
+  
+  // Professional information
+  currentTitle: varchar('current_title', { length: 255 }),
+  currentCompany: varchar('current_company', { length: 255 }),
+  yearsOfExperience: integer('years_of_experience'),
+  
+  // Skills and qualifications
   skills: text('skills'),
+  primarySkills: text('primary_skills'),
+  
+  // Experience details
   experience: text('experience'),
   education: text('education'),
+  
+  // Career preferences
+  desiredRole: varchar('desired_role', { length: 255 }),
+  desiredSalary: varchar('desired_salary', { length: 100 }),
+  desiredLocation: varchar('desired_location', { length: 255 }),
+  remotePreference: varchar('remote_preference', { length: 50 }),
+  
+  // Availability and status
+  availabilityDate: timestamp('availability_date'),
+  currentlyEmployed: boolean('currently_employed'),
+  openToOpportunities: boolean('open_to_opportunities'),
+  
+  // Recruiter notes and ratings
+  recruiterNotes: text('recruiter_notes'),
+  talentRating: integer('talent_rating'),
+  
+  // Timestamps
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
@@ -207,3 +241,6 @@ export enum ActivityType {
   INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
   ACCEPT_INVITATION = 'ACCEPT_INVITATION',
 }
+
+export type TalentProfile = typeof talentProfiles.$inferSelect;
+export type NewTalentProfile = typeof talentProfiles.$inferInsert;

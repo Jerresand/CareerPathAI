@@ -9,7 +9,7 @@ export default async function HomePage() {
   const user = await getUser();
   
   if (user) {
-    redirect('/talent');
+    redirect(user.userType === 'recruiter' ? '/recruiter' : '/talent');
   }
 
   return (

@@ -60,15 +60,20 @@ async function parsePdf(filePath) {
 5. workExperience: An array of objects, each containing:
    - company: Company name
    - title: Job title
-   - dates: Employment period (e.g., "Jan 2020 - Present")
+   - dates: Employment period (e.g., "Jan 2020 - Present" or "Jan 2020 - Dec 2022")
    - description: Job description or achievements
 6. education: An array of objects, each containing:
    - school: Institution name
    - degree: Degree obtained
-   - dates: Study period
+   - dates: Study period (e.g., "Sep 2015 - Jun 2019")
    - gpa: GPA if mentioned
 7. languages: An array of languages the person knows
 8. certifications: An array of certifications
+
+Important notes:
+- For dates, always use the format "MMM YYYY - MMM YYYY" (e.g., "Jan 2020 - Dec 2022") or "MMM YYYY - Present" for current positions
+- Sort workExperience and education arrays with the most recent experiences first (based on end date)
+- If you can't determine exact dates, make your best guess based on the context
 
 Return ONLY valid JSON without any explanations or markdown formatting. If you can't find certain information, use null or empty arrays as appropriate.
 

@@ -1,7 +1,17 @@
 import Link from 'next/link';
 import { CircleIcon } from 'lucide-react';
+import { getUser } from '@/lib/db/queries';
 
-export default function NotFound() {
+export default async function NotFound() {
+  const user = await getUser();
+  
+  // Determine the home link based on user type
+  const homeLink = user 
+    ? user.userType === 'recruiter' 
+      ? '/recruiter' 
+      : '/talent'
+    : '/';
+
   return (
     <div className="flex items-center justify-center min-h-[100dvh]">
       <div className="max-w-md space-y-8 p-4 text-center">
@@ -16,7 +26,7 @@ export default function NotFound() {
           changed, or is temporarily unavailable.
         </p>
         <Link
-          href="/"
+          href={homeLink}
           className="max-w-48 mx-auto flex justify-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
         >
           Back to Home

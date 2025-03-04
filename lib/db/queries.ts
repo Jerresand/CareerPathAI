@@ -136,3 +136,99 @@ export async function getTalentProfile(userId: number) {
   
   return profile;
 }
+
+/**
+ * Creates a talent profile for a user if one doesn't exist
+ * @param userId The ID of the user to create a profile for
+ * @returns The created or existing talent profile
+ */
+export async function ensureTalentProfileExists(userId: number) {
+  // Check if profile already exists
+  const existingProfile = await getTalentProfile(userId);
+  
+  if (existingProfile) {
+    return existingProfile;
+  }
+  
+  // Get user data to pre-fill some profile fields
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, userId));
+  
+  if (!user) {
+    throw new Error(`User with ID ${userId} not found`);
+  }
+  
+  // Create a new profile with basic information from user
+  const [newProfile] = await db
+    .insert(talentProfiles)
+    .values({
+      userId,
+      fullName: user.name || null,
+      // Initialize with empty values for required fields
+      skills: null,
+      experience: null,
+      education: null,
+      openToOpportunities: true,
+    })
+    .returning();
+  
+  return newProfile;
+}
+
+/**
+ * Updates a talent profile with new data
+ * @param userId The ID of the user whose profile to update
+ * @param profileData The new profile data
+ * @returns The updated talent profile
+ */
+export async function updateTalentProfile(userId: number, profileData: Partial<typeof talentProfiles.$inferInsert>) {
+  // Ensure profile exists
+  await ensureTalentProfileExists(userId);
+  
+  // Update the profile
+  const [updatedProfile] = await db
+    .update(talentProfiles)
+    .set({
+      ...profileData,
+      updatedAt: new Date(),
+    })
+    .where(eq(talentProfiles.userId, userId))
+    .returning();
+  
+  return updatedProfile;
+}
+
+/**
+ * Gets all talent users with their profiles
+ * Creates profiles for talents that don't have one
+ * @returns Array of talent users with their profiles
+ */
+export async function getAllTalentsWithProfiles() {
+  // Get all talent users
+  const talentUsers = await db
+    .select()
+    .from(users)
+    .where(eq(users.userType, 'talent'));
+  
+  // Ensure each talent has a profile
+  for (const user of talentUsers) {
+    await ensureTalentProfileExists(user.id);
+  }
+  
+  // Get all talents with their profiles
+  const talents = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      createdAt: users.createdAt,
+      profile: talentProfiles,
+    })
+    .from(users)
+    .leftJoin(talentProfiles, eq(users.id, talentProfiles.userId))
+    .where(eq(users.userType, 'talent'));
+  
+  return talents;
+}

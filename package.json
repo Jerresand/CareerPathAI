@@ -8,7 +8,10 @@
     "db:seed": "npx tsx lib/db/seed.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:migrate-talent-profiles": "npx tsx scripts/run-migration.ts",
+    "db:seed-talent-data": "npx tsx scripts/seed-talent-data.ts",
+    "db:setup-talent-data": "npx tsx scripts/setup-talent-data.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.8.0",
