@@ -121,24 +121,46 @@ The recruiter side:
 
 ```
 ├── app/                    # Next.js app directory
-│   ├── (auth)/               # Authentication pages (login, signup, etc.)
-│   │   ├── login/
-│   │   ├── signup/
-│   │   └── forgot-password/
-│   ├── talent/             # Talent-specific pages
-│   │   ├── (dashboard)/        # Resume upload & job listings
-│   │   └── profile/          # Profile management
-│   ├── recruiter/          # Recruiter-specific pages
-│   │   ├── (dashboard)/        # Talent pool & analytics
-│   │   ├── talents/          # Talent filtering & management
-│   │   └── jobs/            # Job posting management
-│   └── api/                  # API routes
-├── components/            # React components
-│   ├── ui/               # UI components
-├── lib/                   # Core functionality
-│   ├── auth/             # Authentication logic
-│   ├── db/               # Database configuration
-│   ├── payments/         # Stripe integration
+│   ├── (auth)/               # Authentication pages
+│   │   ├── sign-in/            # Sign in functionality
+│   │   ├── sign-up/            # Sign up functionality
+│   │   ├── actions.ts          # Authentication server actions
+│   │   └── login.tsx           # Login page component
+│   ├── talent/               # Talent-specific pages
+│   │   ├── (dashboard)/        # Resume upload & job listings dashboard
+│   │   └── page.tsx            # Main talent landing page
+│   ├── recruiter/            # Recruiter-specific pages
+│   │   └── (dashboard)/        # Talent pool & analytics dashboard
+│   ├── api/                  # API routes
+│   │   ├── parse-resume/       # Resume parsing API
+│   │   ├── upload/             # File upload API
+│   │   └── stripe/             # Stripe payment API endpoints
+│   ├── layout.tsx            # Root layout component
+│   ├── page.tsx              # Landing page
+│   └── globals.css           # Global styles
+├── components/              # React components
+│   ├── ui/                   # UI components
+│   └── ResumeUpload.tsx      # Resume upload component
+├── lib/                     # Core functionality
+│   ├── auth/                 # Authentication logic
+│   ├── db/                   # Database configuration
+│   │   ├── migrations/         # Database migrations
+│   │   ├── schema.ts           # Database schema definitions
+│   │   ├── queries.ts          # Database query functions
+│   │   ├── setup.ts            # Database setup utilities
+│   │   └── seed.ts             # Database seeding script
+│   ├── supabase/             # Supabase client configuration
+│   └── payments/             # Stripe integration
+├── middleware.ts            # Next.js middleware for auth and routing
+├── scripts/                 # Utility scripts
+├── supabase/                # Supabase configuration
+├── docs/                    # Documentation files
+├── test-files/              # Test files and fixtures
+├── volumes/                 # Docker volumes
+├── drizzle.config.ts        # Drizzle ORM configuration
+├── next.config.ts           # Next.js configuration
+├── docker-compose.yml       # Docker Compose configuration
+└── docker-compose.supabase.yml # Supabase Docker configuration
 ```
 
 ## Features

@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { getUser, getTalentProfile } from '@/lib/db/queries';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, Download } from 'lucide-react';
+import { FileText, Download, User, Mail, Phone, Globe, Award } from 'lucide-react';
 import { ResumeUpload } from '@/components/ResumeUpload';
 import { Button } from '@/components/ui/button';
 
@@ -30,10 +30,54 @@ export default async function ResumePage() {
           </CardContent>
         </Card>
 
+        {/* Personal Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Personal Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {parsedData?.fullName && (
+                <div className="flex items-center">
+                  <User className="h-5 w-5 text-orange-500 mr-3" />
+                  <div>
+                    <p className="text-sm text-gray-500">Full Name</p>
+                    <p className="font-medium">{parsedData.fullName}</p>
+                  </div>
+                </div>
+              )}
+              
+              {parsedData?.email && (
+                <div className="flex items-center">
+                  <Mail className="h-5 w-5 text-orange-500 mr-3" />
+                  <div>
+                    <p className="text-sm text-gray-500">Email</p>
+                    <p className="font-medium">{parsedData.email}</p>
+                  </div>
+                </div>
+              )}
+              
+              {parsedData?.phone && (
+                <div className="flex items-center">
+                  <Phone className="h-5 w-5 text-orange-500 mr-3" />
+                  <div>
+                    <p className="text-sm text-gray-500">Phone</p>
+                    <p className="font-medium">{parsedData.phone}</p>
+                  </div>
+                </div>
+              )}
+              
+              {(!parsedData?.fullName && !parsedData?.email && !parsedData?.phone) && (
+                <p className="text-gray-500">No personal information extracted yet</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Parsed Information */}
         <Card>
           <CardHeader>
-            <CardTitle>Parsed Information</CardTitle>
+            <CardTitle>Skills & Experience</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
@@ -80,11 +124,51 @@ export default async function ResumePage() {
                         <h4 className="font-medium">{edu.degree}</h4>
                         <p className="text-sm text-gray-600">{edu.school}</p>
                         <p className="text-sm text-gray-500">{edu.dates}</p>
+                        {edu.gpa && <p className="text-sm text-gray-600">GPA: {edu.gpa}</p>}
                       </div>
                     ))}
                   </div>
                 ) : (
                   <p className="text-gray-500">No education extracted yet</p>
+                )}
+              </div>
+              
+              {/* Languages */}
+              <div>
+                <h3 className="font-medium mb-2">Languages</h3>
+                {parsedData?.languages && parsedData.languages.length > 0 ? (
+                  <div className="flex items-center">
+                    <Globe className="h-5 w-5 text-orange-500 mr-3" />
+                    <div className="flex flex-wrap gap-2">
+                      {parsedData.languages.map((language: string, index: number) => (
+                        <span
+                          key={index}
+                          className="bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded"
+                        >
+                          {language}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-gray-500">No languages extracted yet</p>
+                )}
+              </div>
+              
+              {/* Certifications */}
+              <div>
+                <h3 className="font-medium mb-2">Certifications</h3>
+                {parsedData?.certifications && parsedData.certifications.length > 0 ? (
+                  <div className="space-y-2">
+                    {parsedData.certifications.map((cert: string, index: number) => (
+                      <div key={index} className="flex items-center">
+                        <Award className="h-5 w-5 text-orange-500 mr-3" />
+                        <span>{cert}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500">No certifications extracted yet</p>
                 )}
               </div>
             </div>
